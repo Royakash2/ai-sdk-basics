@@ -13,9 +13,9 @@ export default function Completion() {
         if (!prompt.trim()) return;
 
         setIsLoading(true);
+        setError(null);
         setPrompt("");
         setCompletion("");
-        
 
         try {
             const res = await fetch("/api/completion", {
@@ -25,7 +25,7 @@ export default function Completion() {
             });
             const data = await res.json();
             if(!res.ok){
-                return new Error(data.error || "something went wrong");
+                throw new Error(data.error || "something went wrong");
             }
             setCompletion(data.text);
         } catch (error) {
@@ -38,7 +38,7 @@ export default function Completion() {
 
     return (
         <div className="flex flex-col min-h-screen bg-zinc-950 text-zinc-100">
-            {error && <div className="text-red-500 mb-4">{error}</div>}
+          
             <main className="flex-1 w-full max-w-2xl mx-auto flex flex-col p-6">
                 <h1 className="text-2xl font-semibold mb-6">AI Completion</h1>
 
@@ -48,9 +48,7 @@ export default function Completion() {
                     ) : completion ? (
                         <p className="whitespace-pre-wrap leading-7">{completion}</p>
                     ) : (
-                        <p className="text-zinc-500">
-                            Ask me anything and I&apos;ll respond here.
-                        </p>
+                          error && <div className="text-red-500 mb-4">{error}</div>
                     )}
                 </div>
 
