@@ -12,6 +12,7 @@ export default function StreamPage() {
     setInput,
     isLoading,
     error,
+    stop
   } = useCompletion({
     api: "/api/stream",
   });
@@ -58,13 +59,17 @@ export default function StreamPage() {
             placeholder="How can I help you today?"
             className="flex-1 rounded-lg bg-zinc-900 border border-zinc-700 px-4 py-3 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-500"
           />
-          <button
+          {
+            isLoading ? <button onClick={stop} className="">stop</button> 
+            : <button
             type="submit"
             disabled={isLoading}
             className="rounded-lg bg-zinc-100 px-5 py-3 font-medium text-zinc-900 transition-colors hover:bg-zinc-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? "Thinking..." : "Submit"}
           </button>
+          }
+          
         </form>
       </main>
     </div>
