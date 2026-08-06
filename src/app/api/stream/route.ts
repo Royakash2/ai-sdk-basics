@@ -1,5 +1,5 @@
 import { google } from "@ai-sdk/google";
-import { streamText } from "ai";
+import {  streamText } from "ai";
 
 
 export async function POST(req: Request) {
@@ -8,6 +8,13 @@ export async function POST(req: Request) {
         const result = streamText({
             model: google("gemini-2.5-flash"),
             prompt,
+        });
+        result.usage.then((usage) =>{
+            console.log({
+                inputToken: usage.inputTokens,
+                OutputToken: usage.outputTokens,
+                totalToken: usage.totalTokens,
+            })
         })
         return result.toUIMessageStreamResponse();
     } catch (error) {
