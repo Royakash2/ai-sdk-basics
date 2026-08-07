@@ -1,29 +1,19 @@
 import { google } from "@ai-sdk/google";
-import {
-  convertToModelMessages,
-  createUIMessageStreamResponse,
-  streamText,
-  toUIMessageStream,
-  UIMessage,
-} from "ai";
+import { convertToModelMessages, streamText, UIMessage } from "ai";
 
 export async function POST(req: Request) {
-    try{
-  const { messages }: { messages: UIMessage[] } = await req.json();
-  const modelMessages = await convertToModelMessages(messages);
+  try {
+    const { messages }: { messages: UIMessage[] } = await req.json();
+    const modelMessages = await convertToModelMessages(messages);
 
-  const result = streamText({
-    model: google("gemini-2.5-flash"),
-    messages: modelMessages,
-  });
-
-  return createUIMessageStreamResponse({
-    stream: toUIMessageStream({
-      stream: result.stream,
-    }),
+    const result = streamText({
+      model: google("gemini-2.5-flash"),
+      messages: modelMessages,
     });
-} catch(error){
-    console.error(error)
-}
-  
+
+    return result.toUIMessageStreamResponse();
+  } catch (error) {
+    console.error("error stream chat completion", error);
+    return new Response("failed to stream chat completion:", { status: 500 });
+  }
 }
