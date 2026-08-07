@@ -8,6 +8,7 @@ import {
 } from "ai";
 
 export async function POST(req: Request) {
+    try{
   const { messages }: { messages: UIMessage[] } = await req.json();
   const modelMessages = await convertToModelMessages(messages);
 
@@ -20,5 +21,9 @@ export async function POST(req: Request) {
     stream: toUIMessageStream({
       stream: result.stream,
     }),
-  });
+    });
+} catch(error){
+    console.error(error)
+}
+  
 }
