@@ -10,6 +10,14 @@ export async function POST(req: Request) {
       model: google("gemini-2.5-flash"),
       messages: modelMessages,
     });
+    result.usage.then((usage) => {
+      console.log({
+        messageCount: messages.length,
+        inputToken: usage.inputTokens,
+        OutputToken: usage.outputTokens,
+        totalToken: usage.totalTokens,
+      });
+    });
 
     return result.toUIMessageStreamResponse();
   } catch (error) {
