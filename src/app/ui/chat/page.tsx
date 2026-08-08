@@ -1,51 +1,99 @@
 "use client"
 
 import { useChat } from "@ai-sdk/react"
-import React, { useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 
 export default function ChatPage() {
     const [input, setInput] = useState("")
     const { messages, sendMessage, status,error,stop } = useChat();
+
+    // keep the newest message in view
+    const bottomRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView();
+    }, [messages]);
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         sendMessage({ text: input })
         setInput("")
     }
 
-    return <div className="flex h-dvh flex-col bg-zinc-950 text-zinc-100">
-        {error && <div className="text-red-500">{error.message}</div>}
-        {
-            messages.map((message) => (
-                <div className="mb-4" key={message.id}>
-                    <div className="font-semibold">
-                        {message.role === 'user' ? 'you' : 'ai'}
-                    </div>
-                    {
-                        message.parts.map((part, index) => {
-                            switch (part.type) {
-                                case "text":
-                                    return <div className="whitespace-pre-wrap" key={`${message.id}-${index}`}>{part.text}</div>
-                                default:
-                                    return null
-                            }
-                        })
-                    }
+    return (
+        <div className="flex h-dvh flex-col bg-zinc-950 text-zinc-100">
+            {/* scrollable message area */}
+            <main className="flex-1 min-h-0 overflow-y-auto">
+                <div className="mx-auto flex w-full max-w-2xl flex-col gap-4 p-6">
+                    {error && (
+                        <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+                            {error.message}
+                        </div>
+                    )}
+
+                    {messages.length === 0 && status === "ready" && (
+                        <div className="mt-16 text-center">
+                            <p className="text-sm text-zinc-500">No messages yet — say hi! 👋</p>
+                        </div>
+                    )}
+
+                    {messages.map((message) =>
+                        message.role === "user" ? (
+                            // user bubble — right aligned
+                            <div key={message.id} className="flex justify-end">
+                                <div className="max-w-[80%] rounded-2xl rounded-br-md bg-indigo-600 px-4 py-3 text-sm leading-6">
+                                    {message.parts.map((part, index) =>
+                                        part.type === "text" ? (
+                                            <div key={`${message.id}-${index}`} className="whitespace-pre-wrap">
+                                                {part.text}
+                                            </div>
+                                        ) : null
+                                    )}
+                                </div>
+                            </div>
+                        ) : (
+                            // ai message — left aligned with avatar
+                            <div key={message.id} className="flex gap-3">
+                                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-xs font-bold">
+                                    AI
+                                </div>
+                                <div className="max-w-[80%] rounded-2xl rounded-bl-md bg-zinc-900 px-4 py-3 text-sm leading-6">
+                                    {message.parts.map((part, index) =>
+                                        part.type === "text" ? (
+                                            <div key={`${message.id}-${index}`} className="whitespace-pre-wrap">
+                                                {part.text}
+                                            </div>
+                                        ) : null
+                                    )}
+                                </div>
+                            </div>
+                        )
+                    )}
+
+                    {(status === "submitted" || status === "streaming") && (
+                        <div className="flex items-center gap-3">
+                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-xs font-bold">
+                                AI
+                            </div>
+                            <div className="flex items-center gap-2 rounded-2xl rounded-bl-md bg-zinc-900 px-4 py-3">
+                                <div className="h-4 w-4 animate-spin rounded-full border-2 border-zinc-700 border-t-zinc-300" />
+                                <span className="text-sm text-zinc-400">thinking...</span>
+                            </div>
+                        </div>
+                    )}
                 </div>
-            ))
-        }
-        {
-            (status === "submitted" || status === 'streaming') && (
-                <div className="flex items-center justify-center gap-3 py-6">
-                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-zinc-700 border-t-zinc-300" />
-                    <span className="text-sm text-zinc-400">AI is thinking...</span>
-                </div>
-            )
-        }
-        <form onSubmit={handleSubmit} action="" className="mt-auto w-full max-w-2xl mx-auto p-6">
-            <div className="flex gap-2">
-                <input value={input} onChange={(e) => setInput(e.target.value)} placeholder="how can i help you" className="flex-1 rounded-lg bg-zinc-900 border border-zinc-700 px-4 py-3 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-500" />
-                {
-                    status === "submitted" || status === "streaming" ? (
+                <div ref={bottomRef} />
+            </main>
+
+            {/* composer pinned at the bottom */}
+            <form onSubmit={handleSubmit} action="" className="border-t border-zinc-800/60 p-4">
+                <div className="mx-auto flex w-full max-w-2xl gap-2">
+                    <input
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        placeholder="how can i help you"
+                        className="flex-1 rounded-lg bg-zinc-900 border border-zinc-700 px-4 py-3 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-500"
+                    />
+                    {status === "submitted" || status === "streaming" ? (
                         <button
                             type="button"
                             onClick={stop}
@@ -61,9 +109,9 @@ export default function ChatPage() {
                         >
                             send
                         </button>
-                    )
-                }
-            </div>
-        </form>
-    </div>
+                    )}
+                </div>
+            </form>
+        </div>
+    )
 }
