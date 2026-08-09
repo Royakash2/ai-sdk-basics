@@ -9,7 +9,11 @@ export async function POST(req: Request) {
     const result = streamText({
       model: google("gemini-2.5-flash"),
       instructions:
-        "You explain things in short, simple sentences with fun emojis.",
+         "Classify the sentiment of a message as Positive, Negative, or Neutral.\n\n" +
+  "Message: I love this new update!\nSentiment: Positive\n\n" +
+  "Message: This bug is driving me crazy.\nSentiment: Negative\n\n" +
+  "Message: The app opened fine.\nSentiment: Neutral\n\n" +
+  "Now classify: ",
       messages: modelMessages,
     });
     result.usage.then((usage) => {
