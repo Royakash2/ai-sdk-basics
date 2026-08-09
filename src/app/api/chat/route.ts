@@ -8,6 +8,8 @@ export async function POST(req: Request) {
 
     const result = streamText({
       model: google("gemini-2.5-flash"),
+      instructions:
+        "You explain things in short, simple sentences with fun emojis.",
       messages: modelMessages,
     });
     result.usage.then((usage) => {
