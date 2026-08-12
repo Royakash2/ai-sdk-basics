@@ -21,7 +21,7 @@ export default function StructureData() {
     const recipe = object?.recipe;
 
     return (
-        <div className="flex min-h-dvh flex-col bg-zinc-950 text-zinc-100">
+        <div className="flex h-dvh flex-col bg-zinc-950 text-zinc-100">
             {/* recipe display area */}
             <main className="flex-1 min-h-0 overflow-y-auto">
                 <div className="mx-auto w-full max-w-2xl p-6">
