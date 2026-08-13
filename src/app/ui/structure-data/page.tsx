@@ -6,7 +6,7 @@ import { recipeSchema } from "@/app/api/structured-data/schema";
 
 export default function StructureData() {
     const [dishName, setDishName] = useState("");
-    const { submit, object, isLoading, error } = useObject({
+    const { submit, object, isLoading, error, stop } = useObject({
         api: "/api/structured-data",
         schema: recipeSchema,
     });
@@ -121,13 +121,23 @@ export default function StructureData() {
                     placeholder="e.g. butter chicken"
                     className="flex-1 min-w-0 rounded-lg bg-zinc-900 border border-zinc-700 px-4 py-3 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-500"
                 />
-                <button
-                    type="submit"
-                    disabled={isLoading || !dishName.trim()}
-                    className="shrink-0 rounded-lg bg-zinc-100 px-5 py-3 font-medium text-zinc-900 transition-colors hover:bg-zinc-300 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-zinc-100"
-                >
-                    {isLoading ? "Generating..." : "generate"}
-                </button>
+                {isLoading ? (
+                    <button
+                        type="button"
+                        onClick={stop}
+                        className="shrink-0 rounded-lg border border-red-500/40 bg-red-500/10 px-5 py-3 font-medium text-red-400 transition-colors hover:bg-red-500/20"
+                    >
+                        Stop
+                    </button>
+                ) : (
+                    <button
+                        type="submit"
+                        disabled={!dishName.trim()}
+                        className="shrink-0 rounded-lg bg-zinc-100 px-5 py-3 font-medium text-zinc-900 transition-colors hover:bg-zinc-300 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-zinc-100"
+                    >
+                        generate
+                    </button>
+                )}
             </form>
         </div>
     );
