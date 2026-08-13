@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import { recipeSchema } from "@/app/api/structured-data/schema";
 
@@ -19,11 +19,18 @@ export default function StructureData() {
     };
 
     const recipe = object?.recipe;
+    const mainRef = useRef<HTMLElement>(null);
+
+    // follow the stream: keep the newest generated content in view
+    useEffect(() => {
+        const el = mainRef.current;
+        if (el) el.scrollTop = el.scrollHeight;
+    }, [object]);
 
     return (
         <div className="flex h-dvh flex-col bg-zinc-950 text-zinc-100">
             {/* recipe display area */}
-            <main className="flex-1 min-h-0 overflow-y-auto">
+            <main ref={mainRef} className="flex-1 min-h-0 overflow-y-auto">
                 <div className="mx-auto w-full max-w-2xl p-6">
                     {/* loading state (only while nothing has streamed yet) */}
                     {isLoading && !recipe && (
