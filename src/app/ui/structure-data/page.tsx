@@ -34,44 +34,48 @@ export default function StructureData() {
                 <div className="mx-auto w-full max-w-2xl p-6">
                     {/* loading state (only while nothing has streamed yet) */}
                     {isLoading && !recipe && (
-                        <div className="flex items-center justify-center gap-3 rounded-lg border border-zinc-800 bg-zinc-900 p-8">
-                            <div className="h-5 w-5 animate-spin rounded-full border-2 border-zinc-700 border-t-zinc-300" />
-                            <span className="text-sm text-zinc-400">Generating recipe...</span>
+                        <div className="flex items-center justify-center gap-3 border border-zinc-800 p-8">
+                            <div className="h-4 w-4 animate-spin rounded-full border border-zinc-700 border-t-zinc-400" />
+                            <span className="font-mono text-xs text-zinc-500">
+                                Generating recipe...
+                            </span>
                         </div>
                     )}
 
                     {/* error state */}
                     {!isLoading && error && (
-                        <div className="rounded-lg border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-400">
+                        <div className="border border-red-500/30 px-4 py-3 text-sm text-red-400">
                             Failed to generate recipe: {error.message}
                         </div>
                     )}
 
                     {/* recipe card — renders live as the object streams in */}
                     {!error && recipe && (
-                        <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-6">
-                            <h2 className="text-2xl font-bold text-zinc-100">
+                        <div className="border border-zinc-800 p-6">
+                            <h2 className="text-xl font-medium tracking-tight text-zinc-100">
                                 {recipe.name}
                                 {isLoading && (
-                                    <span className="ml-3 inline-block animate-pulse rounded-full bg-indigo-500/20 px-2.5 py-0.5 align-middle text-xs font-medium text-indigo-300">
-                                        generating...
+                                    <span className="ml-3 inline-block animate-pulse rounded-full border border-zinc-700 px-2.5 py-0.5 align-middle text-[10px] font-medium uppercase tracking-wider text-zinc-400">
+                                        generating
                                     </span>
                                 )}
                             </h2>
 
                             {recipe.ingredients && recipe.ingredients.length > 0 && (
-                                <section className="mt-6">
-                                    <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-500">
+                                <section className="mt-6 border-t border-zinc-800 pt-4">
+                                    <h3 className="text-[11px] font-medium uppercase tracking-[0.25em] text-zinc-500">
                                         Ingredients
                                     </h3>
                                     <ul className="mt-3 space-y-2">
                                         {recipe.ingredients.map((ingredient, index) => (
                                             <li
                                                 key={index}
-                                                className="flex items-center justify-between gap-4 rounded-md bg-zinc-800/60 px-4 py-2 text-sm"
+                                                className="flex items-baseline justify-between gap-4 text-sm text-zinc-300"
                                             >
-                                                <span className="text-zinc-200">{ingredient?.name}</span>
-                                                <span className="text-zinc-400">{ingredient?.amount}</span>
+                                                <span>{ingredient?.name}</span>
+                                                <span className="font-mono text-xs text-zinc-500">
+                                                    {ingredient?.amount}
+                                                </span>
                                             </li>
                                         ))}
                                     </ul>
@@ -79,17 +83,20 @@ export default function StructureData() {
                             )}
 
                             {recipe.steps && recipe.steps.length > 0 && (
-                                <section className="mt-6">
-                                    <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-500">
+                                <section className="mt-6 border-t border-zinc-800 pt-4">
+                                    <h3 className="text-[11px] font-medium uppercase tracking-[0.25em] text-zinc-500">
                                         Steps
                                     </h3>
                                     <ol className="mt-3 space-y-3">
                                         {recipe.steps.map((step, index) => (
-                                            <li key={index} className="flex gap-3 text-sm text-zinc-300">
-                                                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-500/20 text-xs font-medium text-indigo-300">
-                                                    {index + 1}
+                                            <li
+                                                key={index}
+                                                className="flex gap-4 text-sm text-zinc-300"
+                                            >
+                                                <span className="font-mono text-xs text-zinc-600">
+                                                    {String(index + 1).padStart(2, "0")}
                                                 </span>
-                                                <span className="pt-0.5">{step}</span>
+                                                <span className="pt-px">{step}</span>
                                             </li>
                                         ))}
                                     </ol>
@@ -100,7 +107,7 @@ export default function StructureData() {
 
                     {/* empty state */}
                     {!isLoading && !error && !recipe && (
-                        <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-zinc-800 p-10 text-center">
+                        <div className="flex flex-col items-center justify-center gap-2 border border-dashed border-zinc-800 p-10 text-center">
                             <span className="text-3xl">🍽️</span>
                             <p className="text-sm text-zinc-400">
                                 Type a dish below and press{" "}
@@ -113,19 +120,19 @@ export default function StructureData() {
             </main>
 
             {/* composer */}
-            <form onSubmit={handleSubmit} action="" className="mx-auto flex w-full max-w-2xl gap-2 p-6">
+            <form onSubmit={handleSubmit} action="" className="mx-auto flex w-full max-w-2xl gap-4 p-6">
                 <input
                     value={dishName}
                     onChange={(e) => setDishName(e.target.value)}
                     type="text"
                     placeholder="e.g. butter chicken"
-                    className="flex-1 min-w-0 rounded-lg bg-zinc-900 border border-zinc-700 px-4 py-3 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-500"
+                    className="w-full min-w-0 flex-1 border-b border-zinc-700 bg-transparent px-0 py-2 text-sm text-zinc-100 placeholder-zinc-600 focus:border-zinc-300 focus:outline-none"
                 />
                 {isLoading ? (
                     <button
                         type="button"
                         onClick={stop}
-                        className="shrink-0 rounded-lg border border-red-500/40 bg-red-500/10 px-5 py-3 font-medium text-red-400 transition-colors hover:bg-red-500/20"
+                        className="shrink-0 border border-red-500/40 px-4 py-2 text-xs font-medium uppercase tracking-wider text-red-400 transition-colors hover:border-red-400 hover:text-red-300"
                     >
                         Stop
                     </button>
@@ -133,7 +140,7 @@ export default function StructureData() {
                     <button
                         type="submit"
                         disabled={!dishName.trim()}
-                        className="shrink-0 rounded-lg bg-zinc-100 px-5 py-3 font-medium text-zinc-900 transition-colors hover:bg-zinc-300 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-zinc-100"
+                        className="shrink-0 border border-zinc-700 px-4 py-2 text-xs font-medium uppercase tracking-wider text-zinc-300 transition-colors hover:border-zinc-400 hover:text-zinc-100 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-zinc-700 disabled:hover:text-zinc-300"
                     >
                         generate
                     </button>
